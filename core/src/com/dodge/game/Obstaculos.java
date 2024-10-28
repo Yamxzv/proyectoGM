@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
-public class Lluvia {
+public class Obstaculos {
 	private Array<Rectangle> rainDropsPos;
 	private Array<Integer> rainDropsType;
     private long lastDropTime;
@@ -19,7 +19,7 @@ public class Lluvia {
     private Sound dropSound;
     private Music instrumentalMusic;
 
-	public Lluvia(Texture gotaBuena, Texture gotaMala, Sound ss, Music mm) {
+	public Obstaculos(Texture gotaBuena, Texture gotaMala, Sound ss, Music mm) {
 		instrumentalMusic = mm;
 		dropSound = ss;
 		this.gotaBuena = gotaBuena;
@@ -50,7 +50,7 @@ public class Lluvia {
 	      lastDropTime = TimeUtils.nanoTime();
 	   }
 
-   public boolean actualizarMovimiento(Tarro tarro) {
+   public boolean actualizarMovimiento(Auto tarro) {
 	   // generar gotas de lluvia
 	   if(TimeUtils.nanoTime() - lastDropTime > 100000000) crearGotaDeLluvia();
 
@@ -84,14 +84,15 @@ public class Lluvia {
 
    public void actualizarDibujoLluvia(SpriteBatch batch) {
 
-	  for (int i=0; i < rainDropsPos.size; i++ ) {
+	  for (int i = 0; i < rainDropsPos.size ; i++ ) {
 		  Rectangle raindrop = rainDropsPos.get(i);
-		  if(rainDropsType.get(i)==1) // gota dañina
+		  if(rainDropsType.get(i) == 1) // gota dañina
 	         batch.draw(gotaMala, raindrop.x, raindrop.y);
 		  else
 			 batch.draw(gotaBuena, raindrop.x, raindrop.y);
 	   }
    }
+
    public void destruir() {
       dropSound.dispose();
 	   instrumentalMusic.dispose();

@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 
 
-public class Tarro {
+public class Auto {
 	private Rectangle hitbox;
 	private Texture carImage;
 	private Sound sonidoChoque;
@@ -20,7 +20,7 @@ public class Tarro {
 	private int tiempoHeridoMax=50;
 	private int tiempoHerido;
 
-	public Tarro(Texture tex, Sound ss) {
+	public Auto(Texture tex, Sound ss) {
 		carImage = tex;
 		sonidoChoque = ss;
 	}
@@ -79,9 +79,13 @@ public class Tarro {
 		//movimiento desde teclado
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) hitbox.x -= velx * Gdx.graphics.getDeltaTime();
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) hitbox.x += velx * Gdx.graphics.getDeltaTime();
+		if(Gdx.input.isKeyPressed(Input.Keys.UP)) hitbox.y += velx * Gdx.graphics.getDeltaTime(); // Movimiento hacia arriba
+		if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) hitbox.y -= velx * Gdx.graphics.getDeltaTime(); // Movimineto hacia abajo
 		// que no se salga de los bordes izq y der.
 		if(hitbox.x < 0) hitbox.x = 0;
 		if(hitbox.x > 800 - 64) hitbox.x = 800 - 64;
+		if(hitbox.y < 0) hitbox.y = 0; // Limite inferior
+		if(hitbox.y > 480 - hitbox.height) hitbox.y = 480 - hitbox.height; // Limite Superior
 	}
 
 
