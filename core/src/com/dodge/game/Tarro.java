@@ -79,7 +79,7 @@ public class Tarro {
 		//movimiento desde teclado
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) hitbox.x -= velx * Gdx.graphics.getDeltaTime();
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) hitbox.x += velx * Gdx.graphics.getDeltaTime();
-		// que no se salga de los bordes izq y der
+		// que no se salga de los bordes izq y der.
 		if(hitbox.x < 0) hitbox.x = 0;
 		if(hitbox.x > 800 - 64) hitbox.x = 800 - 64;
 	}
