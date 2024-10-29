@@ -28,8 +28,8 @@ public class TutorialScreen implements Screen {
         this.game = game;
         this.batch = game.getBatch();
         this.font = game.getFont();
-        this.camera = new OrthographicCamera();
-        this.camera.setToOrtho(false, 800, 480);
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, 800, 480);
 
         this.backgroundImage = new Texture("background.png");
         this.arrowKeysIcon = new Texture("arrow_keys.png");
