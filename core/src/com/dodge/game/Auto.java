@@ -61,9 +61,9 @@ public class Auto {
 		if (!herido)
 		   batch.draw(carImage, hitbox.x, hitbox.y);
 		else {
-			batch.draw(carImage, hitbox.x, hitbox.y+ MathUtils.random(-5,5));
+			batch.draw(carImage, hitbox.x, hitbox.y+ MathUtils.random(-10,10));
 		    tiempoHerido--;
-		    if (tiempoHerido<=0) herido = false;
+		    if (tiempoHerido <= 0) herido = false;
 		}
 	}
 
