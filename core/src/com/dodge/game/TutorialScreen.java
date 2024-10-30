@@ -62,14 +62,17 @@ public class TutorialScreen implements Screen {
 
         font.getData().setScale(2);
         font.setColor(1, 1, 0, 1); // Amarillo
-        font.draw(batch, "Instrucciones:", 100, 420);
+        font.draw(batch, "Instrucciones del juego:", 100, 440);
 
-        font.getData().setScale(1.5f);
+        //Explicacion objetivo
+        font.getData().setScale(1.2f);
         font.setColor(1, 1, 1, 1); // Blanco
+        font.draw(batch,"Objetivo: Conduce el auto y esquiva todos los obstáculos", 120, 400);
+        font.draw(batch, "para ganar puntos y evitar chocar.", 120, 370);
 
-        batch.draw(arrowKeysIcon, 50, 350, 32, 32);
-        font.draw(batch,"1. Usa las flechas para mover el auto.", 100, 370);
-        font.draw(batch, "2. Esquiva los obstáculos para ganar puntos.", 100, 320);
+        // Controles
+        batch.draw(arrowKeysIcon, 50, 300, 64, 64);
+        font.draw(batch, "Usa las flechas para mover el auto a todas las direcciones!", 120, 330);
 
         font.setColor(1, 1, 1, opacity);
         font.draw(batch, "Cargando...", 100, 250);

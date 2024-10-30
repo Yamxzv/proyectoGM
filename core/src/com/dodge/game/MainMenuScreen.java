@@ -76,19 +76,6 @@ public class MainMenuScreen implements Screen {
 		if (exitHover && Gdx.input.justTouched()){
 			Gdx.app.exit();
 		}
-		/*
-		font.getData().setScale(2, 2);
-		font.draw(batch, "Bienvenido a Dodge Race! ", 100, camera.viewportHeight/2+50);
-		font.draw(batch, "Apreta cualquier tecla para comenzar!", 100, camera.viewportHeight/2-50);
-
-		batch.end();
-
-		if (Gdx.input.isTouched() || Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
-			game.setScreen(new GameScreen(game));
-			dispose();
-		}
-
-		*/
 	}
 
 	@Override

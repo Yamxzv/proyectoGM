@@ -12,69 +12,66 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameScreen implements Screen {
 	final GameLluviaMenu game;
-    private OrthographicCamera camera;
+	private OrthographicCamera camera;
 	private SpriteBatch batch;
 	private BitmapFont font;
 	private Auto auto;
 	private Obstaculos obstaculos;
-
-
-	//boolean activo = true;
+	private Texture fondo;
 
 	public GameScreen(final GameLluviaMenu game) {
 		this.game = game;
-        this.batch = game.getBatch();
-        this.font = game.getFont();
-		  // load the images for the droplet and the bucket, 64x64 pixels each
-		  Sound choqueSound = Gdx.audio.newSound(Gdx.files.internal("choque.mp3"));
-		  auto = new Auto(new Texture(Gdx.files.internal("autorojo1.png")),choqueSound);
+		this.batch = game.getBatch();
+		this.font = game.getFont();
 
-	      // load the drop sound effect and the rain background "music"
-         Texture gota = new Texture(Gdx.files.internal("drop.png"));
-         Texture gotaMala = new Texture(Gdx.files.internal("dropBad.png"));
+		// Inicializar sonidos y texturas de los objetos
+		Sound choqueSound = Gdx.audio.newSound(Gdx.files.internal("choque.mp3"));
+		auto = new Auto(new Texture(Gdx.files.internal("autorojo1.png")), choqueSound);
 
-         Sound dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
+		Texture moneda = new Texture(Gdx.files.internal("moneda.png"));
+		Texture roca = new Texture(Gdx.files.internal("roca.png"));
+		Texture arbol = new Texture(Gdx.files.internal("arbol.png"));
+		Texture hoyo = new Texture(Gdx.files.internal("hoyo.png"));
+		Sound coinSound = Gdx.audio.newSound(Gdx.files.internal("moneda.mp3"));
+		Music instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("instrumental.mp3"));
 
-	     Music instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("instrumental.mp3"));
-         obstaculos = new Obstaculos(gota, gotaMala, dropSound, instrumentalMusic);
+		obstaculos = new Obstaculos(moneda, roca, arbol, hoyo, coinSound, instrumentalMusic);
 
-	      // camera
-	      camera = new OrthographicCamera();
-	      camera.setToOrtho(false, 800, 480);
-	      batch = new SpriteBatch();
-	      // creacion del tarro
-	      auto.crear();
+		// Cargar la textura del fondo
+		fondo = new Texture(Gdx.files.internal("game_background.png"));
 
-	      // creacion de la lluvia
-	      obstaculos.crear();
+		camera = new OrthographicCamera();
+		camera.setToOrtho(false, 800, 480);
+		batch = new SpriteBatch();
+
+		auto.crear();
+		obstaculos.crear();
 	}
 
 	@Override
 	public void render(float delta) {
-		//limpia la pantalla con color azul obscuro.
 		ScreenUtils.clear(0, 0, 0.2f, 1);
-		//actualizar matrices de la cámara
 		camera.update();
-		//actualizar
+
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		//dibujar textos
-		font.draw(batch, "Gotas totales: " + auto.getPuntos(), 5, 475);
-		font.draw(batch, "Vidas : " + auto.getVidas(), 670, 475);
-		font.draw(batch, "HighScore : " + game.getHigherScore(), camera.viewportWidth/2-50, 475);
 
+		// Dibujar fondo y HUD
+		batch.draw(fondo, 0, 0, 800, 480);
+		font.draw(batch, "Monedas totales: " + auto.getPuntos(), 5, 475);
+		font.draw(batch, "Vidas : " + auto.getVidas(), 670, 475);
+		font.draw(batch, "HighScore : " + game.getHigherScore(), camera.viewportWidth / 2 - 50, 475);
+
+		// Actualizar movimiento y verificar colisiones
 		if (!auto.estaHerido()) {
-			// movimiento del tarro desde teclado
-	        auto.actualizarMovimiento();
-			// caida de la lluvia
-	       if (!obstaculos.actualizarMovimiento(auto)) {
-	    	  //actualizar HigherScore
-	    	  if (game.getHigherScore()<auto.getPuntos())
-	    		  game.setHigherScore(auto.getPuntos());
-	    	  //ir a la ventana de finde juego y destruir la actual
-	    	  game.setScreen(new GameOverScreen(game));
-	    	  dispose();
-	       }
+			auto.actualizarMovimiento();
+			if (!obstaculos.actualizarMovimiento(auto)) {
+				// Si el juego termina, actualizar HighScore y pasar a la pantalla Game Over
+				if (game.getHigherScore() < auto.getPuntos())
+					game.setHigherScore(auto.getPuntos());
+				game.setScreen(new GameOverScreen(game, auto.getPuntos()));
+				dispose();
+			}
 		}
 
 		auto.dibujar(batch);
@@ -89,13 +86,11 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
-	  // continuar con sonido de lluvia
-	  obstaculos.continuar();
+		obstaculos.continuar();
 	}
 
 	@Override
 	public void hide() {
-
 	}
 
 	@Override
@@ -106,14 +101,12 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void resume() {
-
 	}
 
 	@Override
 	public void dispose() {
-      auto.destruir();
-      obstaculos.destruir();
-
+		auto.destruir();
+		obstaculos.destruir();
+		fondo.dispose();
 	}
-
 }
