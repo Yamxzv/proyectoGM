@@ -11,19 +11,19 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class Obstaculos {
-	private Array<Rectangle> rainDropsPos;
-	private Array<Integer> rainDropsType;
-	private Array<Texture> obstaculosTextures;
+	private Array<Rectangle> obstaculosPos;
+	private Array<Integer> obstaculosType;
+	final private Array<Texture> obstaculosTextures;
 	private Array<Texture> obstaculosActuales;
-	private long lastDropTime;
-	private Texture gotaBuena;
-	private Sound coinSound;
-	private Music instrumentalMusic;
+	private long lastSpawnTime;
+	final private Texture recolectable;
+	final private Sound coinSound;
+	final private Music instrumentalMusic;
 
 	public Obstaculos(Texture gotaBuena, Texture roca, Texture arbol, Texture hoyo, Sound ss, Music mm) {
 		instrumentalMusic = mm;
 		coinSound = ss;
-		this.gotaBuena = gotaBuena;
+		this.recolectable = gotaBuena;
 		obstaculosTextures = new Array<>();
 		obstaculosTextures.add(roca);
 		obstaculosTextures.add(arbol);
@@ -32,8 +32,8 @@ public class Obstaculos {
 	}
 
 	public void crear() {
-		rainDropsPos = new Array<>();
-		rainDropsType = new Array<>();
+		obstaculosPos = new Array<>();
+		obstaculosType = new Array<>();
 		obstaculosActuales = new Array<>();
 		crearGotaDeLluvia();
 		instrumentalMusic.setLooping(true);
@@ -47,7 +47,7 @@ public class Obstaculos {
 
 		// Decide el tipo de obstáculo (1 = dañino, 2 = recolectable)
 		int tipo = MathUtils.random(1, 10) < 5 ? 1 : 2;
-		rainDropsType.add(tipo);
+		obstaculosType.add(tipo);
 
 		if (tipo == 1) { // Obstáculo dañino
 			Texture obstaculo = obstaculosTextures.get(MathUtils.random(obstaculosTextures.size - 1));
@@ -72,31 +72,31 @@ public class Obstaculos {
 			}
 		} else {
 			// Dimensiones estándar para objetos recolectables
-			obstaculosActuales.add(gotaBuena);
+			obstaculosActuales.add(recolectable);
 			raindrop.width = 32;
 			raindrop.height = 32;
 		}
 
-		rainDropsPos.add(raindrop);
-		lastDropTime = TimeUtils.nanoTime();
+		obstaculosPos.add(raindrop);
+		lastSpawnTime = TimeUtils.nanoTime();
 	}
 
 	public boolean actualizarMovimiento(Auto tarro) {
-		if (TimeUtils.nanoTime() - lastDropTime > 100000000) crearGotaDeLluvia();
+		if (TimeUtils.nanoTime() - lastSpawnTime > 100000000) crearGotaDeLluvia();
 
-		for (int i = 0; i < rainDropsPos.size; i++) {
-			Rectangle raindrop = rainDropsPos.get(i);
+		for (int i = 0; i < obstaculosPos.size; i++) {
+			Rectangle raindrop = obstaculosPos.get(i);
 			raindrop.y -= 300 * Gdx.graphics.getDeltaTime();
 
 			// Remueve gota fuera de pantalla
 			if (raindrop.y + 64 < 0) {
-				rainDropsPos.removeIndex(i);
-				rainDropsType.removeIndex(i);
+				obstaculosPos.removeIndex(i);
+				obstaculosType.removeIndex(i);
 				obstaculosActuales.removeIndex(i);
 			}
 			// Verifica colisión
 			if (raindrop.overlaps(tarro.getArea())) {
-				if (rainDropsType.get(i) == 1) { // Daño
+				if (obstaculosType.get(i) == 1) { // Daño
 					tarro.dañar();
 					if (tarro.getVidas() <= 0)
 						return false;
@@ -104,8 +104,8 @@ public class Obstaculos {
 					tarro.sumarPuntos(10);
 					coinSound.play();
 				}
-				rainDropsPos.removeIndex(i);
-				rainDropsType.removeIndex(i);
+				obstaculosPos.removeIndex(i);
+				obstaculosType.removeIndex(i);
 				obstaculosActuales.removeIndex(i);
 			}
 		}
@@ -113,13 +113,13 @@ public class Obstaculos {
 	}
 
 	public void actualizarDibujoLluvia(SpriteBatch batch) {
-		for (int i = 0; i < rainDropsPos.size; i++) {
-			Rectangle raindrop = rainDropsPos.get(i);
+		for (int i = 0; i < obstaculosPos.size; i++) {
+			Rectangle raindrop = obstaculosPos.get(i);
 			Texture obstaculo = obstaculosActuales.get(i);
 
 			float scale = 1.0f; // Escala por defecto
 
-			if (rainDropsType.get(i) == 2) { // Moneda (recolectable)
+			if (obstaculosType.get(i) == 2) { // Moneda (recolectable)
 				scale = 0.15f;
 			} else if (obstaculo == obstaculosTextures.get(0)) { // Roca
 				scale = 0.1f;

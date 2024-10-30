@@ -11,13 +11,13 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Auto {
 	private Rectangle hitbox;
-	private Texture carImage;
-	private Sound sonidoChoque;
+	final private Texture carImage;
+	final private Sound sonidoChoque;
 	private int vidas = 3;
 	private int puntos = 0;
-	private int velx = 400;
+	final private int velx = 400;
 	private boolean herido = false;
-	private int tiempoHeridoMax=50;
+	final private int tiempoHeridoMax=50;
 	private int tiempoHerido;
 
 	public Auto(Texture tex, Sound ss) {
@@ -69,19 +69,19 @@ public class Auto {
 
 
 	public void actualizarMovimiento() {
-		// movimiento desde mouse/touch
+		// Movimiento desde mouse/touch
 		/*if(Gdx.input.isTouched()) {
 			    Vector3 touchPos = new Vector3();
 			    touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 			    camera.unproject(touchPos);
 			    bucket.x = touchPos.x - 64 / 2;
 		}*/
-		//movimiento desde teclado
+		// Movimiento desde teclado
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) hitbox.x -= velx * Gdx.graphics.getDeltaTime();
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) hitbox.x += velx * Gdx.graphics.getDeltaTime();
 		if(Gdx.input.isKeyPressed(Input.Keys.UP)) hitbox.y += velx * Gdx.graphics.getDeltaTime(); // Movimiento hacia arriba
 		if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) hitbox.y -= velx * Gdx.graphics.getDeltaTime(); // Movimineto hacia abajo
-		// que no se salga de los bordes izq y der.
+		// Que no se salga de los bordes izquierda, derecha, arriba y abajo.
 		if(hitbox.x < 0) hitbox.x = 0;
 		if(hitbox.x > 800 - 64) hitbox.x = 800 - 64;
 		if(hitbox.y < 0) hitbox.y = 0; // Limite inferior
