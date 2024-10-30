@@ -11,15 +11,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameScreen implements Screen {
-	final GameLluviaMenu game;
-	private OrthographicCamera camera;
+	final GameDodgeMenu game;
+	final private OrthographicCamera camera;
 	private SpriteBatch batch;
-	private BitmapFont font;
-	private Auto auto;
-	private Obstaculos obstaculos;
-	private Texture fondo;
+	final private BitmapFont font;
+	final private Auto auto;
+	final private Obstaculos obstaculos;
+	final private Texture fondo;
 
-	public GameScreen(final GameLluviaMenu game) {
+	public GameScreen(final GameDodgeMenu game) {
 		this.game = game;
 		this.batch = game.getBatch();
 		this.font = game.getFont();
@@ -75,7 +75,7 @@ public class GameScreen implements Screen {
 		}
 
 		auto.dibujar(batch);
-		obstaculos.actualizarDibujoLluvia(batch);
+		obstaculos.actualizarDibujoObjeto(batch);
 
 		batch.end();
 	}

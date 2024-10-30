@@ -12,11 +12,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class PausaScreen implements Screen {
 
-	private final GameLluviaMenu game;
-	private GameScreen juego;
-	private SpriteBatch batch;
-	private BitmapFont font;
-	private OrthographicCamera camera;
+	private final GameDodgeMenu game;
+	final private GameScreen juego;
+	final private SpriteBatch batch;
+	final private BitmapFont font;
+	final private OrthographicCamera camera;
 
 	private final Texture backgroundImage;
 	private final Texture resumeButton;
@@ -27,7 +27,7 @@ public class PausaScreen implements Screen {
 	private boolean resumeHover;
 	private boolean exitHover;
 
-	public PausaScreen (final GameLluviaMenu game, GameScreen juego) {
+	public PausaScreen (final GameDodgeMenu game, GameScreen juego) {
 		this.game = game;
         this.juego = juego;
         this.batch = game.getBatch();
