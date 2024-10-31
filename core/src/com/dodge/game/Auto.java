@@ -11,17 +11,14 @@ public class Auto extends Vehiculo {
 
 	public Auto(Texture imagen, Sound sonidoChoque) {
 		super(imagen, sonidoChoque, 400);
-		hitbox.width = 42;
-		hitbox.height = 70;
-		hitbox.x = 800 / 2 - 64 / 2;
-		hitbox.y = 20;
+		crear();
 	}
 
 	@Override
 	public void crear(){
 		hitbox.width = 42;
 		hitbox.height = 70;
-		hitbox.x = 800 / 2 - 64 / 2;
+		hitbox.x = (float) 800 / 2 - (float) 64 / 2;
 		hitbox.y = 20;
 	}
 

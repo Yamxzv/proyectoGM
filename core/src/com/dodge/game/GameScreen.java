@@ -18,7 +18,7 @@ public class GameScreen implements Screen {
 	private Vehiculo vehiculo;
 	private Obstaculos obstaculos;
 	private Texture fondo;
-	private int puntaje;
+	private int puntosTotales;
 	private int nivelActual;
 
 	public GameScreen(final GameDodgeMenu game) {
@@ -28,19 +28,21 @@ public class GameScreen implements Screen {
 		this.camera = new OrthographicCamera();
 		camera.setToOrtho(false, 800, 480);
 
-		this.puntaje = 0;
+		this.puntosTotales = 0;
 		this.nivelActual = 1;
 		inicializarNivel(nivelActual);
 	}
 
 	private void inicializarNivel(int nivel) {
 		// Liberar recursos anteriores
-		if (vehiculo != null) vehiculo.destruir();
+		if (vehiculo != null) {
+			puntosTotales += vehiculo.getPuntos();
+			vehiculo.destruir();
+		}
 		if (obstaculos != null) obstaculos.destruir();
 		if (fondo != null) fondo.dispose();
 
 		// Inicializar recursos según el nivel
-		Sound choqueSound;
 		Sound coinSound;
 		Music instrumentalMusic;
 
@@ -64,13 +66,13 @@ public class GameScreen implements Screen {
 				fondo = new Texture(Gdx.files.internal("fondo_nivel_2.png"));
 
 				// Texturas y sonidos de obstáculos para el nivel 2
-				Texture monedaNivel2 = new Texture(Gdx.files.internal("moneda_nivel2.png"));
+				Texture monedaNivel2 = new Texture(Gdx.files.internal("moneda2.png"));
 				Texture nubeNivel2 = new Texture(Gdx.files.internal("nube.png"));
-				Texture pajaroNivel2 = new Texture(Gdx.files.internal("pajaro.png"));
 				Texture relampagoNivel2 = new Texture(Gdx.files.internal("relampago.png"));
+				Texture pajaroNivel2 = new Texture(Gdx.files.internal("pajaro.png"));
 				coinSound = Gdx.audio.newSound(Gdx.files.internal("sonido_moneda2.mp3"));
-				instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("musica_nivel2.mp3"));
-				obstaculos = new Obstaculos(monedaNivel2, nubeNivel2, pajaroNivel2, relampagoNivel2, coinSound, instrumentalMusic);
+				instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("instrumental2.mp3"));
+				obstaculos = new Obstaculos(monedaNivel2, nubeNivel2, relampagoNivel2, pajaroNivel2, coinSound, instrumentalMusic);
 				break;
 
 			case 3:
@@ -78,13 +80,13 @@ public class GameScreen implements Screen {
 				fondo = new Texture(Gdx.files.internal("fondo_nivel_3.png"));
 
 				// Texturas y sonidos de obstáculos para el nivel 3
-				Texture estrellaNivel3 = new Texture(Gdx.files.internal("estrella.png"));
-				Texture asteroideNivel3 = new Texture(Gdx.files.internal("asteroide.png"));
+				Texture estrellaNivel3 = new Texture(Gdx.files.internal("moneda3.png"));
 				Texture planetaNivel3 = new Texture(Gdx.files.internal("planeta.png"));
 				Texture cometaNivel3 = new Texture(Gdx.files.internal("cometa.png"));
+				Texture asteroideNivel3 = new Texture(Gdx.files.internal("asteroide.png"));
 				coinSound = Gdx.audio.newSound(Gdx.files.internal("sonido_moneda3.mp3"));
-				instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("musica_nivel3.mp3"));
-				obstaculos = new Obstaculos(estrellaNivel3, asteroideNivel3, planetaNivel3, cometaNivel3, coinSound, instrumentalMusic);
+				instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("instrumental3.mp3"));
+				obstaculos = new Obstaculos(estrellaNivel3, planetaNivel3, cometaNivel3, asteroideNivel3, coinSound, instrumentalMusic);
 				break;
 		}
 
@@ -102,7 +104,7 @@ public class GameScreen implements Screen {
 
 		// Dibujar fondo y HUD
 		batch.draw(fondo, 0, 0, 800, 480);
-		font.draw(batch, "Puntos totales: " + vehiculo.getPuntos(), 5, 475);
+		font.draw(batch, "Puntos totales: " + (puntosTotales + vehiculo.getPuntos()), 5, 475);
 		font.draw(batch, "Vidas : " + vehiculo.getVidas(), 670, 475);
 		font.draw(batch, "HighScore : " + game.getHigherScore(), camera.viewportWidth / 2 - 50, 475);
 
@@ -111,9 +113,10 @@ public class GameScreen implements Screen {
 			vehiculo.actualizarMovimiento();
 			if (!obstaculos.actualizarMovimiento(vehiculo)) {
 				// Si el juego termina, actualizar HighScore y pasar a la pantalla Game Over
-				if (game.getHigherScore() < vehiculo.getPuntos())
-					game.setHigherScore(vehiculo.getPuntos());
-				game.setScreen(new GameOverScreen(game, vehiculo.getPuntos()));
+				int puntajeFinal = puntosTotales + vehiculo.getPuntos();
+				if (game.getHigherScore() < puntajeFinal)
+					game.setHigherScore(puntajeFinal);
+				game.setScreen(new GameOverScreen(game, puntajeFinal));
 				dispose();
 			}
 		}
@@ -122,19 +125,14 @@ public class GameScreen implements Screen {
 		obstaculos.actualizarDibujoObjeto(batch);
 		batch.end();
 
-		actualizarPuntaje(delta);
 		verificarCambioNivel();
 	}
 
-	private void actualizarPuntaje(float delta) {
-		puntaje = vehiculo.getPuntos();
-	}
-
 	private void verificarCambioNivel() {
-		if (puntaje >= 1000 && nivelActual == 1){
+		if (vehiculo.getPuntos() >= 800 && nivelActual == 1){
 			nivelActual = 2;
 			inicializarNivel(nivelActual);
-		} else if (puntaje >= 2000 && nivelActual == 2){
+		} else if (vehiculo.getPuntos() >= 800 && nivelActual == 2){
 			nivelActual = 3;
 			inicializarNivel(nivelActual);
 		}
