@@ -74,27 +74,27 @@ public class Obstaculos {
 		lastSpawnTime = TimeUtils.nanoTime();
 	}
 
-	public boolean actualizarMovimiento(Auto tarro) {
+	public boolean actualizarMovimiento(Vehiculo Vehiculo) {
 		if (TimeUtils.nanoTime() - lastSpawnTime > 100000000) crearObstaculo();
 
 		for (int i = 0; i < obstaculosPos.size; i++) {
 			Rectangle hitboxPos = obstaculosPos.get(i);
 			hitboxPos.y -= 300 * Gdx.graphics.getDeltaTime();
 
-			// Remueve gota fuera de pantalla
+			// Remueve obstaculo fuera de pantalla
 			if (hitboxPos.y + 64 < 0) {
 				obstaculosPos.removeIndex(i);
 				obstaculosType.removeIndex(i);
 				obstaculosActuales.removeIndex(i);
 			}
 			// Verifica colisión
-			if (hitboxPos.overlaps(tarro.getArea())) {
+			if (hitboxPos.overlaps(Vehiculo.getArea())) {
 				if (obstaculosType.get(i) == 1) { // Daño
-					tarro.dañar();
-					if (tarro.getVidas() <= 0)
+					Vehiculo.dañar();
+					if (Vehiculo.getVidas() <= 0)
 						return false;
 				} else { // Recolección
-					tarro.sumarPuntos(10);
+					Vehiculo.sumarPuntos(10);
 					coinSound.play();
 				}
 				obstaculosPos.removeIndex(i);
