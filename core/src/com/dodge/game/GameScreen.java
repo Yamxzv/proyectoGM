@@ -11,94 +11,93 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameScreen implements Screen {
-	final GameDodgeMenu game;
-	final private OrthographicCamera camera;
-	final private SpriteBatch batch;
-	final private BitmapFont font;
-	private Vehiculo vehiculo;
-	private Obstaculos obstaculos;
-	private Texture fondo;
-	private int puntosTotales;
-	private int nivelActual;
+	final GameDodgeMenu game; // Referencia al juego principal para manejar pantallas y recursos compartidos
+	private final OrthographicCamera camera; // Cámara para ajustar la vista del juego
+	private final SpriteBatch batch; // Batch para dibujar texturas y sprites
+	private final BitmapFont font; // Fuente para mostrar el texto en pantalla
+	private Vehiculo vehiculo; // Vehículo del jugador, cambia según el nivel
+	private GestorObstaculos gestorObstaculos; // Administrador de obstáculos y monedas en pantalla
+	private Texture fondo; // Textura de fondo que cambia en cada nivel
+	private int puntosTotales; // Puntaje total acumulado
+	private int nivelActual; // Nivel actual del juego
 
 	public GameScreen(final GameDodgeMenu game) {
 		this.game = game;
 		this.batch = game.getBatch();
 		this.font = game.getFont();
 		this.camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
+		camera.setToOrtho(false, 800, 480); // Configuración inicial de la cámara
 
 		this.puntosTotales = 0;
-		this.nivelActual = 1;
-		inicializarNivel(nivelActual);
+		this.nivelActual = 1; // Empieza en el nivel 1
+		inicializarNivel(nivelActual); // Llama a inicializar el nivel actual
 	}
 
 	private void inicializarNivel(int nivel) {
-		// Liberar recursos anteriores
+		// Liberar recursos del nivel anterior
 		if (vehiculo != null) {
-			puntosTotales += vehiculo.getPuntos();
-			vehiculo.destruir();
+			puntosTotales += vehiculo.getPuntos(); // Sumar puntos del vehículo anterior
+			vehiculo.destruir(); // Liberar recursos del vehículo
 		}
-		if (obstaculos != null) obstaculos.destruir();
-		if (fondo != null) fondo.dispose();
+		if (gestorObstaculos != null) gestorObstaculos.destruir(); // Liberar recursos del gestor de obstáculos
+		if (fondo != null) fondo.dispose(); // Liberar textura del fondo
 
-		// Inicializar recursos según el nivel
+		// Variables para sonidos de monedas y música de fondo
 		Sound coinSound;
 		Music instrumentalMusic;
 
+		// Asignación de recursos según el nivel
 		switch (nivel) {
 			case 1:
+				// Configuración del nivel 1: Auto, fondo y obstáculos de carretera
 				vehiculo = new Auto(new Texture(Gdx.files.internal("autorojo1.png")), Gdx.audio.newSound(Gdx.files.internal("choque_auto.mp3")));
 				fondo = new Texture(Gdx.files.internal("fondo_nivel_1.png"));
-
-				// Texturas y sonidos de obstáculos para el nivel 1
 				Texture monedaNivel1 = new Texture(Gdx.files.internal("moneda.png"));
 				Texture rocaNivel1 = new Texture(Gdx.files.internal("roca.png"));
 				Texture arbolNivel1 = new Texture(Gdx.files.internal("arbol.png"));
 				Texture hoyoNivel1 = new Texture(Gdx.files.internal("hoyo.png"));
 				coinSound = Gdx.audio.newSound(Gdx.files.internal("moneda.mp3"));
 				instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("instrumental.mp3"));
-				obstaculos = new Obstaculos(monedaNivel1, rocaNivel1, arbolNivel1, hoyoNivel1, coinSound, instrumentalMusic);
+				gestorObstaculos = new GestorObstaculos(monedaNivel1, rocaNivel1, arbolNivel1, hoyoNivel1, coinSound, instrumentalMusic);
 				break;
 
 			case 2:
+				// Configuración del nivel 2: Avión, fondo y obstáculos aéreos
 				vehiculo = new Avion(new Texture(Gdx.files.internal("avion.png")), Gdx.audio.newSound(Gdx.files.internal("choque_avion.mp3")));
 				fondo = new Texture(Gdx.files.internal("fondo_nivel_2.png"));
-
-				// Texturas y sonidos de obstáculos para el nivel 2
 				Texture monedaNivel2 = new Texture(Gdx.files.internal("moneda2.png"));
 				Texture nubeNivel2 = new Texture(Gdx.files.internal("nube.png"));
 				Texture relampagoNivel2 = new Texture(Gdx.files.internal("relampago.png"));
 				Texture pajaroNivel2 = new Texture(Gdx.files.internal("pajaro.png"));
 				coinSound = Gdx.audio.newSound(Gdx.files.internal("sonido_moneda2.mp3"));
 				instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("instrumental2.mp3"));
-				obstaculos = new Obstaculos(monedaNivel2, nubeNivel2, relampagoNivel2, pajaroNivel2, coinSound, instrumentalMusic);
+				gestorObstaculos = new GestorObstaculos(monedaNivel2, nubeNivel2, relampagoNivel2, pajaroNivel2, coinSound, instrumentalMusic);
 				break;
 
 			case 3:
+				// Configuración del nivel 3: Nave espacial, fondo y obstáculos espaciales
 				vehiculo = new Nave(new Texture(Gdx.files.internal("nave.png")), Gdx.audio.newSound(Gdx.files.internal("choque_nave.mp3")));
 				fondo = new Texture(Gdx.files.internal("fondo_nivel_3.png"));
-
-				// Texturas y sonidos de obstáculos para el nivel 3
 				Texture estrellaNivel3 = new Texture(Gdx.files.internal("moneda3.png"));
 				Texture planetaNivel3 = new Texture(Gdx.files.internal("planeta.png"));
 				Texture cometaNivel3 = new Texture(Gdx.files.internal("cometa.png"));
 				Texture asteroideNivel3 = new Texture(Gdx.files.internal("asteroide.png"));
 				coinSound = Gdx.audio.newSound(Gdx.files.internal("sonido_moneda3.mp3"));
 				instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("instrumental3.mp3"));
-				obstaculos = new Obstaculos(estrellaNivel3, planetaNivel3, cometaNivel3, asteroideNivel3, coinSound, instrumentalMusic);
+				gestorObstaculos = new GestorObstaculos(estrellaNivel3, planetaNivel3, cometaNivel3, asteroideNivel3, coinSound, instrumentalMusic);
 				break;
 		}
 
-        vehiculo.crear();
-		obstaculos.crear();
+		// Creación de los recursos del vehículo y los obstáculos
+		vehiculo.crear();
+		gestorObstaculos.crear();
 	}
 
 	@Override
 	public void render(float delta) {
-		ScreenUtils.clear(0, 0, 0.2f, 1);
+		ScreenUtils.clear(0, 0, 0.2f, 1); // Limpia la pantalla antes de dibujar
 		camera.update();
-		batch.setProjectionMatrix(camera.combined);
+		batch.setProjectionMatrix(camera.combined); // Actualiza la cámara
 
 		batch.begin();
 
@@ -111,60 +110,60 @@ public class GameScreen implements Screen {
 		// Actualizar movimiento y verificar colisiones
 		if (!vehiculo.estaHerido()) {
 			vehiculo.actualizarMovimiento();
-			if (!obstaculos.actualizarMovimiento(vehiculo)) {
+			if (!gestorObstaculos.actualizarMovimiento(vehiculo)) {
 				// Si el juego termina, actualizar HighScore y pasar a la pantalla Game Over
 				int puntajeFinal = puntosTotales + vehiculo.getPuntos();
 				if (game.getHigherScore() < puntajeFinal)
 					game.setHigherScore(puntajeFinal);
 				game.setScreen(new GameOverScreen(game, puntajeFinal));
-				dispose();
+				dispose(); // Liberar recursos
 			}
 		}
 
+		// Dibujar el vehículo y obstáculos
 		vehiculo.dibujar(batch);
-		obstaculos.actualizarDibujoObjeto(batch);
+		gestorObstaculos.actualizarDibujoObjeto(batch);
 		batch.end();
 
-		verificarCambioNivel();
+		verificarCambioNivel(); // Verifica si es necesario cambiar de nivel
 	}
 
 	private void verificarCambioNivel() {
-		if (vehiculo.getPuntos() >= 800 && nivelActual == 1){
+		// Cambio de nivel si el puntaje supera cierto umbral
+		if (vehiculo.getPuntos() >= 800 && nivelActual == 1) {
 			nivelActual = 2;
 			inicializarNivel(nivelActual);
-		} else if (vehiculo.getPuntos() >= 800 && nivelActual == 2){
+		} else if (vehiculo.getPuntos() >= 800 && nivelActual == 2) {
 			nivelActual = 3;
 			inicializarNivel(nivelActual);
 		}
 	}
 
 	@Override
-	public void resize(int width, int height) {
-	}
+	public void resize(int width, int height) {}
 
 	@Override
 	public void show() {
-		obstaculos.continuar();
+		gestorObstaculos.continuar(); // Reanuda obstáculos si estaban pausados
 	}
 
 	@Override
-	public void hide() {
-	}
+	public void hide() {}
 
 	@Override
 	public void pause() {
-		obstaculos.pausar();
-		game.setScreen(new PausaScreen(game, this));
+		gestorObstaculos.pausar(); // Pausa los obstáculos
+		game.setScreen(new PausaScreen(game, this)); // Muestra pantalla de pausa
 	}
 
 	@Override
-	public void resume() {
-	}
+	public void resume() {}
 
 	@Override
 	public void dispose() {
+		// Liberar todos los recursos al salir de la pantalla
 		vehiculo.destruir();
-		obstaculos.destruir();
+		gestorObstaculos.destruir();
 		fondo.dispose();
 	}
 }

@@ -11,7 +11,7 @@ public class Avion extends Vehiculo {
 
     public Avion(Texture imagen, Sound sonidoChoque) {
         super(imagen, sonidoChoque, 400);
-        crear();
+        crear(); // Configura hitbox inicial
     }
 
     @Override
@@ -24,21 +24,22 @@ public class Avion extends Vehiculo {
 
     @Override
     public void actualizarMovimiento() {
+        // Movimiento desde teclado
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) hitbox.x -= velocidad * Gdx.graphics.getDeltaTime();
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) hitbox.x += velocidad * Gdx.graphics.getDeltaTime();
-        if(Gdx.input.isKeyPressed(Input.Keys.UP)) hitbox.y += velocidad * Gdx.graphics.getDeltaTime(); // Movimiento hacia arriba
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) hitbox.y -= velocidad * Gdx.graphics.getDeltaTime(); // Movimineto hacia abajo
-        // Que no se salga de los bordes izquierda, derecha, arriba y abajo.
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)) hitbox.y += velocidad * Gdx.graphics.getDeltaTime(); // Arriba
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) hitbox.y -= velocidad * Gdx.graphics.getDeltaTime(); // Abajo
+        // Restricción de bordes
         if(hitbox.x < 0) hitbox.x = 0;
         if(hitbox.x > 800 - 64) hitbox.x = 800 - 64;
-        if(hitbox.y < 0) hitbox.y = 0; // Limite inferior
-        if(hitbox.y > 480 - hitbox.height) hitbox.y = 480 - hitbox.height; // Limite Superior
+        if(hitbox.y < 0) hitbox.y = 0;
+        if(hitbox.y > 480 - hitbox.height) hitbox.y = 480 - hitbox.height;
     }
 
     @Override
     public void actualizarEstado(){
         if (herido){
-            tiempoHerido--;
+            tiempoHerido--; // Control de duración de estado "herido"
             if (tiempoHerido <= 0) herido = false;
         }
     }
@@ -49,12 +50,11 @@ public class Avion extends Vehiculo {
         float escalaY = hitbox.height / imagen.getHeight();
 
         if (!herido) {
-            batch.draw(imagen, hitbox.x, hitbox.y, imagen.getWidth() * escalaX, imagen.getHeight() * escalaY);
+            batch.draw(imagen, hitbox.x, hitbox.y, imagen.getWidth() * escalaX, imagen.getHeight() * escalaY); // Dibujo normal
         } else {
-            batch.draw(imagen, hitbox.x, hitbox.y + MathUtils.random(-8, 8), imagen.getWidth() * escalaX, imagen.getHeight() * escalaY);
+            batch.draw(imagen, hitbox.x, hitbox.y + MathUtils.random(-8, 8), imagen.getWidth() * escalaX, imagen.getHeight() * escalaY); // Dibujo con efecto de "temblor"
             tiempoHerido--;
             if (tiempoHerido <= 0) herido = false;
         }
     }
-
 }

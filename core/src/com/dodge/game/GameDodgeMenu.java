@@ -11,18 +11,18 @@ public class GameDodgeMenu extends Game {
 	private int higherScore;
 
 	public void create() {
-		batch = new SpriteBatch();
-		font = new BitmapFont(); // Use libGDX's default Arial font
-		this.setScreen(new TutorialScreen(this));
+		batch = new SpriteBatch(); // Inicializa el batch para dibujar
+		font = new BitmapFont(); // Fuente Arial predeterminada de libGDX
+		this.setScreen(new TutorialScreen(this)); // Cambia a la pantalla de tutorial
 	}
 
 	public void render() {
-		super.render(); // important!
+		super.render(); // Renderizado de la pantalla actual
 	}
 
 	public void dispose() {
-		batch.dispose();
-		font.dispose();
+		batch.dispose(); // Libera recursos de batch
+		font.dispose(); // Libera recursos de font
 	}
 
 	public SpriteBatch getBatch() {

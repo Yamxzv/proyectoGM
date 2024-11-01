@@ -31,7 +31,7 @@ public class GameOverScreen implements Screen {
 		this.batch = game.getBatch();
 		this.font = game.getFont();
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
+		camera.setToOrtho(false, 800, 480); // Configuración de cámara
 
 		this.backgroundImage = new Texture("game_over_background.png");
 		this.gameOverImage = new Texture("game_over_image.png");
@@ -40,10 +40,10 @@ public class GameOverScreen implements Screen {
 		this.exitButton = new Texture("exit_button.png");
 		this.exitButtonHover = new Texture("exit_button_hover.png");
 
-		this.retryHover = false;
-		this.exitHover = false;
+		this.retryHover = false; // Estado de hover para botón de retry
+		this.exitHover = false;  // Estado de hover para botón de salir
 
-		this.score = score;
+		this.score = score; // Puntaje final del jugador
 	}
 
 	@Override
@@ -71,47 +71,42 @@ public class GameOverScreen implements Screen {
 		batch.end();
 
 		if (retryHover && Gdx.input.justTouched()) {
-			game.setScreen(new GameScreen(game));
+			game.setScreen(new GameScreen(game)); // Reinicia el juego
 			dispose();
 		}
 		if (exitHover && Gdx.input.justTouched()) {
-			Gdx.app.exit();
+			Gdx.app.exit(); // Cierra la aplicación
 		}
 	}
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
-
+		// Método invocado al mostrar la pantalla
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-
+		// Ajuste de tamaño de pantalla
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-
+		// Método invocado al pausar la aplicación
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-
+		// Método invocado al reanudar la aplicación
 	}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
-
+		// Método invocado al ocultar la pantalla
 	}
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		// Libera los recursos
 		backgroundImage.dispose();
 		gameOverImage.dispose();
 		retryButton.dispose();
