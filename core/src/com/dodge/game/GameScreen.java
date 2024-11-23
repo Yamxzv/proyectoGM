@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -107,6 +108,7 @@ public class GameScreen implements Screen {
 
 		// Dibujar fondo y HUD
 		batch.draw(fondo, 0, 0, 800, 480);
+		font.setColor(Color.RED);
 		font.draw(batch, "Puntos totales: " + scoreManager.getCurrentScore(), 5, 475);
 		font.draw(batch, "Vidas : " + vehiculo.getVidas(), 670, 475);
 		font.draw(batch, "HighScore : " + scoreManager.getHighScore(), camera.viewportWidth / 2 - 50, 475);

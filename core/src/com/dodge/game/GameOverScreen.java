@@ -2,6 +2,7 @@ package com.dodge.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -62,6 +63,7 @@ public class GameOverScreen implements Screen {
 		batch.draw(gameOverImage, 300, 300, 200, 100);
 
 		font.getData().setScale(1.5f);
+		font.setColor(Color.BLACK);
 		font.draw(batch, "Puntaje: " + score, 350, 240);
 		font.draw(batch, "Mejor Puntaje: " + game.getHigherScore(), 350, 210);
 
