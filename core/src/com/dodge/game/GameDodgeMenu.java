@@ -8,7 +8,6 @@ public class GameDodgeMenu extends Game {
 
 	private SpriteBatch batch;
 	private BitmapFont font;
-	private int higherScore;
 
 	public void create() {
 		batch = new SpriteBatch(); // Inicializa el batch para dibujar
@@ -34,11 +33,6 @@ public class GameDodgeMenu extends Game {
 	}
 
 	public int getHigherScore() {
-		return higherScore;
+		return ScoreManager.getInstance().getHighScore();
 	}
-
-	public void setHigherScore(int higherScore) {
-		this.higherScore = higherScore;
-	}
-
 }

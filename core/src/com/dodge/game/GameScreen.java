@@ -18,8 +18,8 @@ public class GameScreen implements Screen {
 	private Vehiculo vehiculo; // Vehículo del jugador, cambia según el nivel
 	private GestorObstaculos gestorObstaculos; // Administrador de obstáculos y monedas en pantalla
 	private Texture fondo; // Textura de fondo que cambia en cada nivel
-	private int puntosTotales; // Puntaje total acumulado
 	private int nivelActual; // Nivel actual del juego
+	private final ScoreManager scoreManager; // Usando el Singleton ScoreManager
 
 	public GameScreen(final GameDodgeMenu game) {
 		this.game = game;
@@ -28,15 +28,16 @@ public class GameScreen implements Screen {
 		this.camera = new OrthographicCamera();
 		camera.setToOrtho(false, 800, 480); // Configuración inicial de la cámara
 
-		this.puntosTotales = 0;
 		this.nivelActual = 1; // Empieza en el nivel 1
+		this.scoreManager = ScoreManager.getInstance();
+		scoreManager.resetCurrentScore();
 		inicializarNivel(nivelActual); // Llama a inicializar el nivel actual
 	}
 
 	private void inicializarNivel(int nivel) {
 		// Liberar recursos del nivel anterior
 		if (vehiculo != null) {
-			puntosTotales += vehiculo.getPuntos(); // Sumar puntos del vehículo anterior
+			scoreManager.addPoints(vehiculo.getPuntos()); // Sumar puntos del vehículo anterior
 			vehiculo.destruir(); // Liberar recursos del vehículo
 		}
 		if (gestorObstaculos != null) gestorObstaculos.destruir(); // Liberar recursos del gestor de obstáculos
@@ -50,7 +51,8 @@ public class GameScreen implements Screen {
 		switch (nivel) {
 			case 1:
 				// Configuración del nivel 1: Auto, fondo y obstáculos de carretera
-				vehiculo = new Auto(new Texture(Gdx.files.internal("autorojo1.png")), Gdx.audio.newSound(Gdx.files.internal("choque_auto.mp3")));
+				vehiculo = new Auto();
+				vehiculo.inicializar(new Texture(Gdx.files.internal("autorojo1.png")), Gdx.audio.newSound(Gdx.files.internal("choque_auto.mp3")));
 				fondo = new Texture(Gdx.files.internal("fondo_nivel_1.png"));
 				Texture monedaNivel1 = new Texture(Gdx.files.internal("moneda.png"));
 				Texture rocaNivel1 = new Texture(Gdx.files.internal("roca.png"));
@@ -63,7 +65,8 @@ public class GameScreen implements Screen {
 
 			case 2:
 				// Configuración del nivel 2: Avión, fondo y obstáculos aéreos
-				vehiculo = new Avion(new Texture(Gdx.files.internal("avion.png")), Gdx.audio.newSound(Gdx.files.internal("choque_avion.mp3")));
+				vehiculo = new Avion();
+				vehiculo.inicializar(new Texture(Gdx.files.internal("avion.png")), Gdx.audio.newSound(Gdx.files.internal("choque_avion.mp3")));
 				fondo = new Texture(Gdx.files.internal("fondo_nivel_2.png"));
 				Texture monedaNivel2 = new Texture(Gdx.files.internal("moneda2.png"));
 				Texture nubeNivel2 = new Texture(Gdx.files.internal("nube.png"));
@@ -76,7 +79,8 @@ public class GameScreen implements Screen {
 
 			case 3:
 				// Configuración del nivel 3: Nave espacial, fondo y obstáculos espaciales
-				vehiculo = new Nave(new Texture(Gdx.files.internal("nave.png")), Gdx.audio.newSound(Gdx.files.internal("choque_nave.mp3")));
+				vehiculo = new Nave();
+				vehiculo.inicializar(new Texture(Gdx.files.internal("nave.png")), Gdx.audio.newSound(Gdx.files.internal("choque_nave.mp3")));
 				fondo = new Texture(Gdx.files.internal("fondo_nivel_3.png"));
 				Texture estrellaNivel3 = new Texture(Gdx.files.internal("moneda3.png"));
 				Texture planetaNivel3 = new Texture(Gdx.files.internal("planeta.png"));
@@ -103,18 +107,18 @@ public class GameScreen implements Screen {
 
 		// Dibujar fondo y HUD
 		batch.draw(fondo, 0, 0, 800, 480);
-		font.draw(batch, "Puntos totales: " + (puntosTotales + vehiculo.getPuntos()), 5, 475);
+		font.draw(batch, "Puntos totales: " + scoreManager.getCurrentScore(), 5, 475);
 		font.draw(batch, "Vidas : " + vehiculo.getVidas(), 670, 475);
-		font.draw(batch, "HighScore : " + game.getHigherScore(), camera.viewportWidth / 2 - 50, 475);
+		font.draw(batch, "HighScore : " + scoreManager.getHighScore(), camera.viewportWidth / 2 - 50, 475);
 
 		// Actualizar movimiento y verificar colisiones
 		if (!vehiculo.estaHerido()) {
 			vehiculo.actualizarMovimiento();
 			if (!gestorObstaculos.actualizarMovimiento(vehiculo)) {
 				// Si el juego termina, actualizar HighScore y pasar a la pantalla Game Over
-				int puntajeFinal = puntosTotales + vehiculo.getPuntos();
-				if (game.getHigherScore() < puntajeFinal)
-					game.setHigherScore(puntajeFinal);
+				int puntajeFinal = scoreManager.getCurrentScore() + vehiculo.getPuntos();
+				if (scoreManager.getHighScore() < puntajeFinal)
+					scoreManager.resetHighScore();
 				game.setScreen(new GameOverScreen(game, puntajeFinal));
 				dispose(); // Liberar recursos
 			}
@@ -130,10 +134,12 @@ public class GameScreen implements Screen {
 
 	private void verificarCambioNivel() {
 		// Cambio de nivel si el puntaje supera cierto umbral
-		if (vehiculo.getPuntos() >= 800 && nivelActual == 1) {
+		int puntajeActual = scoreManager.getCurrentScore();
+
+		if (puntajeActual >= 800 && nivelActual == 1) {
 			nivelActual = 2;
 			inicializarNivel(nivelActual);
-		} else if (vehiculo.getPuntos() >= 800 && nivelActual == 2) {
+		} else if (puntajeActual >= 1600 && nivelActual == 2) {
 			nivelActual = 3;
 			inicializarNivel(nivelActual);
 		}

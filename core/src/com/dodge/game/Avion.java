@@ -2,33 +2,34 @@ package com.dodge.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Avion extends Vehiculo {
-
-    public Avion(Texture imagen, Sound sonidoChoque) {
-        super(imagen, sonidoChoque, 400);
-        crear(); // Configura hitbox inicial
+    @Override
+    protected void definirVelocidad(){
+        velocidadBase = 450;
     }
 
     @Override
-    public void crear(){
+    protected void configurarHitbox(){
+        hitbox = new Rectangle(); // Crea el rectángulo de colisión
         hitbox.width = 60;
         hitbox.height = 70;
+    }
+
+    protected void configurarPosicionInicial(){
         hitbox.x = (float) 800 / 2 - (float) 64 / 2;
         hitbox.y = 20;
     }
 
     @Override
     public void actualizarMovimiento() {
+        actualizarEstadoHerido();
         // Movimiento desde teclado
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) hitbox.x -= velocidad * Gdx.graphics.getDeltaTime();
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) hitbox.x += velocidad * Gdx.graphics.getDeltaTime();
-        if(Gdx.input.isKeyPressed(Input.Keys.UP)) hitbox.y += velocidad * Gdx.graphics.getDeltaTime(); // Arriba
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) hitbox.y -= velocidad * Gdx.graphics.getDeltaTime(); // Abajo
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) hitbox.x -= velocidadBase * Gdx.graphics.getDeltaTime();
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) hitbox.x += velocidadBase * Gdx.graphics.getDeltaTime();
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)) hitbox.y += velocidadBase * Gdx.graphics.getDeltaTime(); // Arriba
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) hitbox.y -= velocidadBase * Gdx.graphics.getDeltaTime(); // Abajo
         // Restricción de bordes
         if(hitbox.x < 0) hitbox.x = 0;
         if(hitbox.x > 800 - 64) hitbox.x = 800 - 64;
@@ -36,25 +37,4 @@ public class Avion extends Vehiculo {
         if(hitbox.y > 480 - hitbox.height) hitbox.y = 480 - hitbox.height;
     }
 
-    @Override
-    public void actualizarEstado(){
-        if (herido){
-            tiempoHerido--; // Control de duración de estado "herido"
-            if (tiempoHerido <= 0) herido = false;
-        }
-    }
-
-    @Override
-    public void dibujar(SpriteBatch batch) {
-        float escalaX = hitbox.width / imagen.getWidth();
-        float escalaY = hitbox.height / imagen.getHeight();
-
-        if (!herido) {
-            batch.draw(imagen, hitbox.x, hitbox.y, imagen.getWidth() * escalaX, imagen.getHeight() * escalaY); // Dibujo normal
-        } else {
-            batch.draw(imagen, hitbox.x, hitbox.y + MathUtils.random(-8, 8), imagen.getWidth() * escalaX, imagen.getHeight() * escalaY); // Dibujo con efecto de "temblor"
-            tiempoHerido--;
-            if (tiempoHerido <= 0) herido = false;
-        }
-    }
 }

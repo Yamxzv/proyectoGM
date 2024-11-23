@@ -12,7 +12,6 @@ public class MainMenuScreen implements Screen {
 
 	final GameDodgeMenu game;
 	final private SpriteBatch batch;
-	final private BitmapFont font;
 	final private OrthographicCamera camera;
 
 	private final Texture backgroundImage;
@@ -28,7 +27,6 @@ public class MainMenuScreen implements Screen {
 	public MainMenuScreen(final GameDodgeMenu game) {
 		this.game = game;
 		this.batch = game.getBatch();
-		this.font = game.getFont();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 800, 480);
 
