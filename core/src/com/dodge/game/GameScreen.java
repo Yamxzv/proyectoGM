@@ -1,9 +1,7 @@
 package com.dodge.game;
 
-import com.badlogic.gdx.Gdx;
+
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -44,68 +42,28 @@ public class GameScreen implements Screen {
 		if (gestorObstaculos != null) gestorObstaculos.destruir();
 		if (fondo != null) fondo.dispose();
 
-		Sound coinSound;
-		Music instrumentalMusic;
-
+		// Usar el patrón Factory para crear el nivel
+		FabricaNiveles factory;
 		switch (nivel) {
 			case 1:
-				vehiculo = new Auto();
-				vehiculo.inicializar(new Texture(Gdx.files.internal("autorojo1.png")),
-						Gdx.audio.newSound(Gdx.files.internal("choque_auto.mp3")));
-				fondo = new Texture(Gdx.files.internal("fondo_nivel_1.png"));
-
-				// Texturas nivel 1
-				Texture monedaNivel1 = new Texture(Gdx.files.internal("moneda.png"));
-				Texture bonusNivel1 = new Texture(Gdx.files.internal("bonus.png")); // Nueva textura bonus
-				Texture rocaNivel1 = new Texture(Gdx.files.internal("roca.png"));
-				Texture arbolNivel1 = new Texture(Gdx.files.internal("arbol.png"));
-				Texture hoyoNivel1 = new Texture(Gdx.files.internal("hoyo.png"));
-
-				coinSound = Gdx.audio.newSound(Gdx.files.internal("moneda.mp3"));
-				instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("instrumental.mp3"));
-				gestorObstaculos = new GestorObstaculos(monedaNivel1, bonusNivel1, rocaNivel1,
-						arbolNivel1, hoyoNivel1, coinSound, instrumentalMusic);
+				factory = new CrearTierra();
 				break;
-
 			case 2:
-				vehiculo = new Avion();
-				vehiculo.inicializar(new Texture(Gdx.files.internal("avion.png")),
-						Gdx.audio.newSound(Gdx.files.internal("choque_avion.mp3")));
-				fondo = new Texture(Gdx.files.internal("fondo_nivel_2.png"));
-
-				// Texturas nivel 2
-				Texture monedaNivel2 = new Texture(Gdx.files.internal("moneda2.png"));
-				Texture bonusNivel2 = new Texture(Gdx.files.internal("bonus.png")); // Nueva textura bonus
-				Texture nubeNivel2 = new Texture(Gdx.files.internal("nube.png"));
-				Texture relampagoNivel2 = new Texture(Gdx.files.internal("relampago.png"));
-				Texture pajaroNivel2 = new Texture(Gdx.files.internal("pajaro.png"));
-
-				coinSound = Gdx.audio.newSound(Gdx.files.internal("sonido_moneda2.mp3"));
-				instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("instrumental2.mp3"));
-				gestorObstaculos = new GestorObstaculos(monedaNivel2, bonusNivel2, nubeNivel2,
-						relampagoNivel2, pajaroNivel2, coinSound, instrumentalMusic);
+				factory = new CrearAire();
 				break;
-
 			case 3:
-				vehiculo = new Nave();
-				vehiculo.inicializar(new Texture(Gdx.files.internal("nave.png")),
-						Gdx.audio.newSound(Gdx.files.internal("choque_nave.mp3")));
-				fondo = new Texture(Gdx.files.internal("fondo_nivel_3.png"));
-
-				// Texturas nivel 3
-				Texture estrellaNivel3 = new Texture(Gdx.files.internal("moneda3.png"));
-				Texture bonusNivel3 = new Texture(Gdx.files.internal("bonus.png")); // Nueva textura bonus
-				Texture planetaNivel3 = new Texture(Gdx.files.internal("planeta.png"));
-				Texture cometaNivel3 = new Texture(Gdx.files.internal("cometa.png"));
-				Texture asteroideNivel3 = new Texture(Gdx.files.internal("asteroide.png"));
-
-				coinSound = Gdx.audio.newSound(Gdx.files.internal("sonido_moneda3.mp3"));
-				instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("instrumental3.mp3"));
-				gestorObstaculos = new GestorObstaculos(estrellaNivel3, bonusNivel3, planetaNivel3,
-						cometaNivel3, asteroideNivel3, coinSound, instrumentalMusic);
+				factory = new CrearEspacio();
 				break;
+			default:
+				throw new IllegalArgumentException("Nivel no válido: " + nivel);
 		}
 
+		// Crear todos los elementos del nivel usando la fábrica
+		vehiculo = factory.crearVehiculo();
+		fondo = factory.crearFondo();
+		gestorObstaculos = factory.crearGestorObstaculos();
+
+		// Inicializar los elementos
 		vehiculo.crear();
 		gestorObstaculos.crear();
 	}
@@ -150,10 +108,10 @@ public class GameScreen implements Screen {
 		// Cambio de nivel si el puntaje supera cierto umbral
 		int puntajeActual = scoreManager.getCurrentScore();
 
-		if (puntajeActual >= 100 && nivelActual == 1) {
+		if (puntajeActual >= 800 && nivelActual == 1) {
 			nivelActual = 2;
 			inicializarNivel(nivelActual);
-		} else if (puntajeActual >= 100 && nivelActual == 2) {
+		} else if (puntajeActual >= 1600 && nivelActual == 2) {
 			nivelActual = 3;
 			inicializarNivel(nivelActual);
 		}
