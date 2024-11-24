@@ -1,5 +1,7 @@
 package com.dodge.game;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -7,102 +9,110 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 
 public abstract class Vehiculo {
-    protected Rectangle hitbox; // Área de colisión del vehículo
-    protected Texture imagen; // Textura del vehículo
+    protected Rectangle hitbox; // Área de colisión
+    protected Texture imagen; // Imagen del vehículo
     protected Sound sonidoChoque; // Sonido al chocar
-    protected int vidas; // Número de vidas del vehículo
+    protected int vidas; // Vidas del vehículo
     protected int puntos; // Puntos acumulados
-    protected int velocidadBase; // Velocidad de movimiento del vehículo
-    protected boolean herido; // Estado de daño del vehículo
-    protected int tiempoHeridoMax; // Tiempo máximo de daño
-    protected int tiempoHerido; // Tiempo restante de estado herido
+    protected int velocidadBase; // Velocidad estándar
+    protected boolean herido; // Estado de daño
+    protected int tiempoHeridoMax; // Tiempo de invulnerabilidad
+    protected int tiempoHerido; // Contador de invulnerabilidad
 
-    // Template method que define el esqueleto del algoritmo
-    public final void crear(){
-        inicializarEstado();
-        definirVelocidad();
-        configurarHitbox();
-        configurarPosicionInicial();
+    public final void crear() {
+        inicializarEstado(); // Inicializa las variables
+        definirVelocidad(); // Define la velocidad
+        configurarHitbox(); // Configura la hitbox
+        configurarPosicionInicial(); // Ubica al vehículo
     }
 
-    // Método template para inicializar el vehículo
     public final void inicializar(Texture imagen, Sound soundChoque) {
         this.imagen = imagen;
         this.sonidoChoque = soundChoque;
-        crear();
+        crear(); // Llama al flujo de inicialización
     }
 
-    private void inicializarEstado(){
-        vidas = 3; // Inicializa las vidas
-        puntos = 0; // Inicializa los puntos
-        tiempoHeridoMax = 50; // Define el tiempo máximo de herido
-        tiempoHerido = 0; // Inicializa el tiempo herido
+    private void inicializarEstado() {
+        vidas = 3; // Inicializa vidas
+        puntos = 0; // Inicializa puntos
+        tiempoHeridoMax = 50; // Tiempo invulnerable
+        tiempoHerido = 0; // Sin invulnerabilidad
     }
 
-    // Métodos abstractos que deben implementar las subclases
-    protected abstract void definirVelocidad();
-    protected abstract void configurarHitbox();
-    protected abstract void configurarPosicionInicial();
-    public abstract void actualizarMovimiento();
+    protected abstract void definirVelocidad(); // Define velocidad
+    protected abstract void configurarHitbox(); // Configura hitbox
+    protected abstract void configurarPosicionInicial(); // Posición inicial
 
-    // Métodos concretos comunes a todos los vehículos
+    public void actualizarMovimiento() {
+        actualizarEstadoHerido(); // Actualiza si está herido
+        actualizarPosicion(); // Movimiento
+        restriccionBordes(); // Mantiene dentro del área
+    }
 
-    // Método para dibujar el vehículo
+    protected void actualizarPosicion() {
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) hitbox.x -= velocidadBase * Gdx.graphics.getDeltaTime();
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) hitbox.x += velocidadBase * Gdx.graphics.getDeltaTime();
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)) hitbox.y += velocidadBase * Gdx.graphics.getDeltaTime();
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) hitbox.y -= velocidadBase * Gdx.graphics.getDeltaTime();
+    }
+
+    protected void restriccionBordes() {
+        if(hitbox.x < 0) hitbox.x = 0; // Borde izquierdo
+        if(hitbox.x > 800 - 64) hitbox.x = 800 - 64; // Borde derecho
+        if(hitbox.y < 0) hitbox.y = 0; // Borde inferior
+        if(hitbox.y > 480 - hitbox.height) hitbox.y = 480 - hitbox.height; // Borde superior
+    }
+
     public void dibujar(SpriteBatch batch) {
         float escalaX = hitbox.width / imagen.getWidth();
         float escalaY = hitbox.height / imagen.getHeight();
 
         if (!herido) {
-            batch.draw(imagen, hitbox.x, hitbox.y, imagen.getWidth() * escalaX, imagen.getHeight() * escalaY); // Dibujo normal
+            batch.draw(imagen, hitbox.x, hitbox.y, imagen.getWidth() * escalaX, imagen.getHeight() * escalaY);
         } else {
-            batch.draw(imagen, hitbox.x, hitbox.y + MathUtils.random(-8, 8), imagen.getWidth() * escalaX, imagen.getHeight() * escalaY); // Dibujo con efecto de "temblor"
+            batch.draw(imagen, hitbox.x, hitbox.y + MathUtils.random(-8, 8), imagen.getWidth() * escalaX, imagen.getHeight() * escalaY);
             tiempoHerido--;
             if (tiempoHerido <= 0) herido = false;
         }
     }
 
-    // Método para dañar el vehículo
     public void dañar() {
-        vidas--; // Reduce las vidas
-        herido = true; // Establece el estado de herido
-        tiempoHerido = tiempoHeridoMax; // Reinicia el temporizador de herido
-        sonidoChoque.play(); // Reproduce el sonido de choque
+        vidas--; // Reduce vidas
+        herido = true; // Activa estado herido
+        tiempoHerido = tiempoHeridoMax; // Invulnerabilidad
+        sonidoChoque.play(); // Reproduce sonido
     }
 
-    // Método para liberar recursos
     public void destruir() {
         if (imagen != null) {
-            imagen.dispose(); // Libera la textura del vehículo
+            imagen.dispose(); // Libera recursos
         }
     }
 
-    public void actualizarEstadoHerido(){
-        if (herido){
-            tiempoHerido--; // Control de duración de estado "herido"
-            if (tiempoHerido <= 0) herido = false;
+    public void actualizarEstadoHerido() {
+        if (herido) {
+            tiempoHerido--; // Reduce contador
+            if (tiempoHerido <= 0) herido = false; // Finaliza invulnerabilidad
         }
     }
-
-    // Getters y setters
 
     public boolean estaHerido() {
-        return herido; // Retorna si el vehículo está herido
+        return herido; // Retorna estado
     }
 
     public Rectangle getArea() {
-        return hitbox; // Retorna el área de colisión
+        return hitbox; // Retorna hitbox
     }
 
     public int getVidas() {
-        return vidas; // Retorna el número de vidas
+        return vidas; // Retorna vidas
     }
 
     public int getPuntos() {
-        return puntos; // Retorna los puntos acumulados
+        return puntos; // Retorna puntos
     }
 
     public void sumarPuntos(int puntos) {
-        ScoreManager.getInstance().addPoints(puntos);
+        ScoreManager.getInstance().addPoints(puntos); // Suma puntos globales
     }
-
 }

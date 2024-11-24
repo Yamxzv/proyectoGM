@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameDodgeMenu extends Game {
 
-	private SpriteBatch batch;
-	private BitmapFont font;
+	private SpriteBatch batch; // SpriteBatch para el renderizado de gráficos
+	private BitmapFont font; // Fuente para mostrar texto
 
 	public void create() {
 		batch = new SpriteBatch(); // Inicializa el batch para dibujar
@@ -16,23 +16,23 @@ public class GameDodgeMenu extends Game {
 	}
 
 	public void render() {
-		super.render(); // Renderizado de la pantalla actual
+		super.render(); // Renderiza la pantalla actual
 	}
 
 	public void dispose() {
-		batch.dispose(); // Libera recursos de batch
-		font.dispose(); // Libera recursos de font
+		batch.dispose(); // Libera los recursos del batch
+		font.dispose(); // Libera los recursos de la fuente
 	}
 
 	public SpriteBatch getBatch() {
-		return batch;
+		return batch; // Retorna el SpriteBatch
 	}
 
 	public BitmapFont getFont() {
-		return font;
+		return font; // Retorna la fuente
 	}
 
 	public int getHigherScore() {
-		return ScoreManager.getInstance().getHighScore();
+		return ScoreManager.getInstance().getHighScore(); // Obtiene el puntaje más alto
 	}
 }

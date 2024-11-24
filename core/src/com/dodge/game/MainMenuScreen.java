@@ -10,10 +10,12 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class MainMenuScreen implements Screen {
 
+	// Referencia al juego principal y objetos necesarios para la pantalla
 	final GameDodgeMenu game;
 	final private SpriteBatch batch;
 	final private OrthographicCamera camera;
 
+	// Texturas para el fondo, logo y botones
 	private final Texture backgroundImage;
 	private final Texture logo;
 	private final Texture playButton;
@@ -21,6 +23,7 @@ public class MainMenuScreen implements Screen {
 	private final Texture exitButton;
 	private final Texture exitButtonHover;
 
+	// Variables para saber si el mouse está sobre los botones
 	private boolean playHover;
 	private boolean exitHover;
 
@@ -28,9 +31,9 @@ public class MainMenuScreen implements Screen {
 		this.game = game;
 		this.batch = game.getBatch();
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
+		camera.setToOrtho(false, 800, 480); // Configura la cámara para una vista 2D
 
-		// Carga de imágenes
+		// Carga las texturas necesarias
 		this.backgroundImage = new Texture("menu_background.png");
 		this.logo = new Texture("logo.png");
 		this.playButton = new Texture("play_button.png");
@@ -44,65 +47,63 @@ public class MainMenuScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
-		ScreenUtils.clear(0.5f, 0.5f, 0.5f, 1);
+		ScreenUtils.clear(0.5f, 0.5f, 0.5f, 1); // Limpia la pantalla con un color gris
 		batch.setProjectionMatrix(camera.combined);
 
+		// Obtiene las coordenadas del mouse
 		int mouseX = Gdx.input.getX();
 		int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
 
-		// Verificación de hover sobre botones
+		// Detecta si el mouse está sobre los botones
 		playHover = mouseX >= 100 && mouseX <= 248 && mouseY >= 150 && mouseY <= 298;
 		exitHover = mouseX >= 552 && mouseX <= 700 && mouseY >= 150 && mouseY <= 298;
 
 		batch.begin();
-		// Dibuja fondo y logo
+		// Dibuja el fondo, logo y botones
 		batch.draw(backgroundImage, 0, 0, 800, 480);
 		batch.draw(logo, 300, 250, 200, 200);
-
-		// Dibuja botones con efecto hover
 		batch.draw(playHover ? playButtonHover : playButton, 100, 150, 148, 148);
 		batch.draw(exitHover ? exitButtonHover : exitButton, 552, 150, 148, 148);
-
 		batch.end();
 
-		// Acciones al hacer clic
+		// Cambia de pantalla o cierra la aplicación según el botón clicado
 		if (playHover && Gdx.input.justTouched()){
-			game.setScreen(new GameScreen(game));
-			dispose();
+			game.setScreen(new GameScreen(game)); // Cambia a la pantalla de juego
+			dispose(); // Libera recursos de la pantalla actual
 		}
 		if (exitHover && Gdx.input.justTouched()){
-			Gdx.app.exit();
+			Gdx.app.exit(); // Cierra la aplicación
 		}
 	}
 
 	@Override
 	public void show() {
-		// Método vacío
+		// Llamado al mostrar la pantalla (no usado aquí)
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		// Método vacío
+		// Llamado al cambiar el tamaño de la ventana (no usado aquí)
 	}
 
 	@Override
 	public void pause() {
-		// Método vacío
+		// Llamado al pausar la aplicación (no usado aquí)
 	}
 
 	@Override
 	public void resume() {
-		// Método vacío
+		// Llamado al reanudar la aplicación (no usado aquí)
 	}
 
 	@Override
 	public void hide() {
-		// Método vacío
+		// Llamado al ocultar la pantalla (no usado aquí)
 	}
 
 	@Override
 	public void dispose() {
-		// Libera recursos
+		// Libera los recursos cargados en la pantalla
 		backgroundImage.dispose();
 		logo.dispose();
 		playButton.dispose();

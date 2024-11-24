@@ -1,6 +1,5 @@
 package com.dodge.game;
 
-
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -29,33 +28,34 @@ public class GameScreen implements Screen {
 
 		this.nivelActual = 1; // Empieza en el nivel 1
 		this.scoreManager = ScoreManager.getInstance();
-		scoreManager.resetCurrentScore();
+		scoreManager.resetCurrentScore(); // Resetea el puntaje actual
 		inicializarNivel(nivelActual); // Llama a inicializar el nivel actual
 	}
 
+	// Inicializa los elementos del nivel según el nivel proporcionado
 	private void inicializarNivel(int nivel) {
 		// Liberar recursos del nivel anterior
 		if (vehiculo != null) {
-			scoreManager.addPoints(vehiculo.getPuntos());
-			vehiculo.destruir();
+			scoreManager.addPoints(vehiculo.getPuntos()); // Suma los puntos del vehículo
+			vehiculo.destruir(); // Destruye el vehículo del nivel anterior
 		}
-		if (gestorObstaculos != null) gestorObstaculos.destruir();
-		if (fondo != null) fondo.dispose();
+		if (gestorObstaculos != null) gestorObstaculos.destruir(); // Destruye los obstáculos
+		if (fondo != null) fondo.dispose(); // Libera la textura del fondo anterior
 
 		// Usar el patrón Factory para crear el nivel
 		FabricaNiveles factory;
 		switch (nivel) {
 			case 1:
-				factory = new CrearTierra();
+				factory = new CrearTierra(); // Crea el nivel de la Tierra
 				break;
 			case 2:
-				factory = new CrearAire();
+				factory = new CrearAire(); // Crea el nivel de Aire
 				break;
 			case 3:
-				factory = new CrearEspacio();
+				factory = new CrearEspacio(); // Crea el nivel Espacial
 				break;
 			default:
-				throw new IllegalArgumentException("Nivel no válido: " + nivel);
+				throw new IllegalArgumentException("Nivel no válido: " + nivel); // Excepción para nivel no válido
 		}
 
 		// Crear todos los elementos del nivel usando la fábrica
@@ -71,8 +71,8 @@ public class GameScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		ScreenUtils.clear(0, 0, 0.2f, 1); // Limpia la pantalla antes de dibujar
-		camera.update();
-		batch.setProjectionMatrix(camera.combined); // Actualiza la cámara
+		camera.update(); // Actualiza la cámara
+		batch.setProjectionMatrix(camera.combined); // Actualiza la vista del batch
 
 		batch.begin();
 
@@ -85,40 +85,42 @@ public class GameScreen implements Screen {
 
 		// Actualizar movimiento y verificar colisiones
 		if (!vehiculo.estaHerido()) {
-			vehiculo.actualizarMovimiento();
-			if (!gestorObstaculos.actualizarMovimiento(vehiculo)) {
+			vehiculo.actualizarMovimiento(); // Actualiza la posición del vehículo
+			if (!gestorObstaculos.actualizarMovimiento(vehiculo)) { // Verifica colisiones con obstáculos
 				// Si el juego termina, actualizar HighScore y pasar a la pantalla Game Over
 				int puntajeFinal = scoreManager.getCurrentScore() + vehiculo.getPuntos();
 				if (scoreManager.getHighScore() < puntajeFinal)
-					scoreManager.resetHighScore();
-				game.setScreen(new GameOverScreen(game, puntajeFinal));
-				dispose(); // Liberar recursos
+					scoreManager.resetHighScore(); // Actualiza el HighScore si es necesario
+				game.setScreen(new GameOverScreen(game, puntajeFinal)); // Muestra la pantalla de Game Over
+				dispose(); // Libera recursos
 			}
 		}
 
 		// Dibujar el vehículo y obstáculos
 		vehiculo.dibujar(batch);
-		gestorObstaculos.actualizarDibujoObjeto(batch);
+		gestorObstaculos.actualizarDibujoObjeto(batch); // Actualiza la visualización de los obstáculos
 		batch.end();
 
 		verificarCambioNivel(); // Verifica si es necesario cambiar de nivel
 	}
 
+	// Verifica si el puntaje actual alcanza el umbral para cambiar de nivel
 	private void verificarCambioNivel() {
-		// Cambio de nivel si el puntaje supera cierto umbral
 		int puntajeActual = scoreManager.getCurrentScore();
 
-		if (puntajeActual >= 800 && nivelActual == 1) {
+		if (puntajeActual >= 800 && nivelActual == 1) { // Si el puntaje es mayor a 800 y estamos en el nivel 1
 			nivelActual = 2;
-			inicializarNivel(nivelActual);
-		} else if (puntajeActual >= 1600 && nivelActual == 2) {
+			inicializarNivel(nivelActual); // Cambia al nivel 2
+		} else if (puntajeActual >= 1600 && nivelActual == 2) { // Si el puntaje es mayor a 1600 y estamos en el nivel 2
 			nivelActual = 3;
-			inicializarNivel(nivelActual);
+			inicializarNivel(nivelActual); // Cambia al nivel 3
 		}
 	}
 
 	@Override
-	public void resize(int width, int height) {}
+	public void resize(int width, int height) {
+		// Método invocado al redimensionar la ventana
+	}
 
 	@Override
 	public void show() {
@@ -126,7 +128,9 @@ public class GameScreen implements Screen {
 	}
 
 	@Override
-	public void hide() {}
+	public void hide() {
+		// Método invocado al ocultar la pantalla
+	}
 
 	@Override
 	public void pause() {
@@ -135,7 +139,9 @@ public class GameScreen implements Screen {
 	}
 
 	@Override
-	public void resume() {}
+	public void resume() {
+		// Método invocado al reanudar la aplicación
+	}
 
 	@Override
 	public void dispose() {

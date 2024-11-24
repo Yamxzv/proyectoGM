@@ -16,14 +16,14 @@ public class PausaScreen implements Screen {
 	final private BitmapFont font; // Fuente para texto
 	final private OrthographicCamera camera; // Cámara para la proyección
 
-	private final Texture backgroundImage; // Textura del fondo
+	private final Texture backgroundImage; // Fondo
 	private final Texture resumeButton; // Botón de reanudar
-	private final Texture resumeButtonHover; // Botón de reanudar (hover)
+	private final Texture resumeButtonHover; // Botón hover de reanudar
 	private final Texture exitButton; // Botón de salir
-	private final Texture exitButtonHover; // Botón de salir (hover)
+	private final Texture exitButtonHover; // Botón hover de salir
 
-	private boolean resumeHover; // Estado del botón de reanudar
-	private boolean exitHover; // Estado del botón de salir
+	private boolean resumeHover; // Estado hover de reanudar
+	private boolean exitHover; // Estado hover de salir
 
 	public PausaScreen(final GameDodgeMenu game, GameScreen juego) {
 		this.game = game;
@@ -31,81 +31,81 @@ public class PausaScreen implements Screen {
 		this.batch = game.getBatch();
 		this.font = game.getFont();
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480); // Configura la cámara
+		camera.setToOrtho(false, 800, 480); // Cámara ortográfica
 
-		// Carga las texturas
+		// Texturas
 		this.backgroundImage = new Texture("background.png");
 		this.resumeButton = new Texture("play_button.png");
 		this.resumeButtonHover = new Texture("play_button_hover.png");
 		this.exitButton = new Texture("exit_button.png");
 		this.exitButtonHover = new Texture("exit_button_hover.png");
 
-		this.resumeHover = false; // Inicializa el estado del botón de reanudar
-		this.exitHover = false; // Inicializa el estado del botón de salir
+		this.resumeHover = false; // Inicializa estado hover de reanudar
+		this.exitHover = false; // Inicializa estado hover de salir
 	}
 
 	@Override
 	public void render(float delta) {
-		ScreenUtils.clear(0.411f, 0.411f, 0.411f, 1); // Limpia la pantalla
+		ScreenUtils.clear(0.411f, 0.411f, 0.411f, 1); // Limpia fondo gris
 
-		camera.update(); // Actualiza la cámara
-		batch.setProjectionMatrix(camera.combined); // Establece la matriz de proyección
+		camera.update(); // Actualiza cámara
+		batch.setProjectionMatrix(camera.combined); // Matriz proyección
 
-		// Obtiene la posición del mouse
+		// Coordenadas mouse
 		int mouseX = Gdx.input.getX();
 		int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
 
-		// Verifica si el mouse está sobre los botones
+		// Hover en botones
 		resumeHover = mouseX >= 100 && mouseX <= 248 && mouseY >= 150 && mouseY <= 298;
 		exitHover = mouseX >= 552 && mouseX <= 700 && mouseY >= 150 && mouseY <= 298;
 
 		batch.begin();
-		batch.draw(backgroundImage, 0, 0, 800, 480); // Dibuja el fondo
-		font.draw(batch, "Juego en Pausa ", 320, 400); // Dibuja el texto
+		batch.draw(backgroundImage, 0, 0, 800, 480); // Dibuja fondo
+		font.draw(batch, "Juego en Pausa ", 320, 400); // Texto título
 
-		// Dibuja los botones con efecto hover
+		// Botones con hover
 		batch.draw(resumeHover ? resumeButtonHover : resumeButton, 100, 150, 148, 148);
 		batch.draw(exitHover ? exitButtonHover : exitButton, 552, 150, 148, 148);
 		batch.end();
 
-		// Maneja las interacciones del mouse
+		// Acciones de clic
 		if (resumeHover && Gdx.input.justTouched()) {
-			game.setScreen(juego); // Reanuda el juego
+			game.setScreen(juego); // Reanudar juego
 			dispose();
 		}
 		if (exitHover && Gdx.input.justTouched()) {
-			Gdx.app.exit(); // Sale de la aplicación
+			Gdx.app.exit(); // Salir del juego
 		}
 	}
 
 	@Override
 	public void show() {
-		// Método no implementado
+		// Sin implementación
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		// Método no implementado
+		// Sin implementación
 	}
 
 	@Override
 	public void pause() {
-		// Método no implementado
+		// Sin implementación
 	}
 
 	@Override
 	public void resume() {
-		// Método no implementado
+		// Sin implementación
 	}
 
 	@Override
 	public void hide() {
-		// Método no implementado
+		// Sin implementación
 	}
 
 	@Override
 	public void dispose() {
-		// Libera las texturas
+		// Libera recursos
 		backgroundImage.dispose();
 		resumeButton.dispose();
 		resumeButtonHover.dispose();
