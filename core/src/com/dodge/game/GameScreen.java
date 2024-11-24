@@ -38,62 +38,74 @@ public class GameScreen implements Screen {
 	private void inicializarNivel(int nivel) {
 		// Liberar recursos del nivel anterior
 		if (vehiculo != null) {
-			scoreManager.addPoints(vehiculo.getPuntos()); // Sumar puntos del vehículo anterior
-			vehiculo.destruir(); // Liberar recursos del vehículo
+			scoreManager.addPoints(vehiculo.getPuntos());
+			vehiculo.destruir();
 		}
-		if (gestorObstaculos != null) gestorObstaculos.destruir(); // Liberar recursos del gestor de obstáculos
-		if (fondo != null) fondo.dispose(); // Liberar textura del fondo
+		if (gestorObstaculos != null) gestorObstaculos.destruir();
+		if (fondo != null) fondo.dispose();
 
-		// Variables para sonidos de monedas y música de fondo
 		Sound coinSound;
 		Music instrumentalMusic;
 
-		// Asignación de recursos según el nivel
 		switch (nivel) {
 			case 1:
-				// Configuración del nivel 1: Auto, fondo y obstáculos de carretera
 				vehiculo = new Auto();
-				vehiculo.inicializar(new Texture(Gdx.files.internal("autorojo1.png")), Gdx.audio.newSound(Gdx.files.internal("choque_auto.mp3")));
+				vehiculo.inicializar(new Texture(Gdx.files.internal("autorojo1.png")),
+						Gdx.audio.newSound(Gdx.files.internal("choque_auto.mp3")));
 				fondo = new Texture(Gdx.files.internal("fondo_nivel_1.png"));
+
+				// Texturas nivel 1
 				Texture monedaNivel1 = new Texture(Gdx.files.internal("moneda.png"));
+				Texture bonusNivel1 = new Texture(Gdx.files.internal("bonus.png")); // Nueva textura bonus
 				Texture rocaNivel1 = new Texture(Gdx.files.internal("roca.png"));
 				Texture arbolNivel1 = new Texture(Gdx.files.internal("arbol.png"));
 				Texture hoyoNivel1 = new Texture(Gdx.files.internal("hoyo.png"));
+
 				coinSound = Gdx.audio.newSound(Gdx.files.internal("moneda.mp3"));
 				instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("instrumental.mp3"));
-				gestorObstaculos = new GestorObstaculos(monedaNivel1, rocaNivel1, arbolNivel1, hoyoNivel1, coinSound, instrumentalMusic);
+				gestorObstaculos = new GestorObstaculos(monedaNivel1, bonusNivel1, rocaNivel1,
+						arbolNivel1, hoyoNivel1, coinSound, instrumentalMusic);
 				break;
 
 			case 2:
-				// Configuración del nivel 2: Avión, fondo y obstáculos aéreos
 				vehiculo = new Avion();
-				vehiculo.inicializar(new Texture(Gdx.files.internal("avion.png")), Gdx.audio.newSound(Gdx.files.internal("choque_avion.mp3")));
+				vehiculo.inicializar(new Texture(Gdx.files.internal("avion.png")),
+						Gdx.audio.newSound(Gdx.files.internal("choque_avion.mp3")));
 				fondo = new Texture(Gdx.files.internal("fondo_nivel_2.png"));
+
+				// Texturas nivel 2
 				Texture monedaNivel2 = new Texture(Gdx.files.internal("moneda2.png"));
+				Texture bonusNivel2 = new Texture(Gdx.files.internal("bonus.png")); // Nueva textura bonus
 				Texture nubeNivel2 = new Texture(Gdx.files.internal("nube.png"));
 				Texture relampagoNivel2 = new Texture(Gdx.files.internal("relampago.png"));
 				Texture pajaroNivel2 = new Texture(Gdx.files.internal("pajaro.png"));
+
 				coinSound = Gdx.audio.newSound(Gdx.files.internal("sonido_moneda2.mp3"));
 				instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("instrumental2.mp3"));
-				gestorObstaculos = new GestorObstaculos(monedaNivel2, nubeNivel2, relampagoNivel2, pajaroNivel2, coinSound, instrumentalMusic);
+				gestorObstaculos = new GestorObstaculos(monedaNivel2, bonusNivel2, nubeNivel2,
+						relampagoNivel2, pajaroNivel2, coinSound, instrumentalMusic);
 				break;
 
 			case 3:
-				// Configuración del nivel 3: Nave espacial, fondo y obstáculos espaciales
 				vehiculo = new Nave();
-				vehiculo.inicializar(new Texture(Gdx.files.internal("nave.png")), Gdx.audio.newSound(Gdx.files.internal("choque_nave.mp3")));
+				vehiculo.inicializar(new Texture(Gdx.files.internal("nave.png")),
+						Gdx.audio.newSound(Gdx.files.internal("choque_nave.mp3")));
 				fondo = new Texture(Gdx.files.internal("fondo_nivel_3.png"));
+
+				// Texturas nivel 3
 				Texture estrellaNivel3 = new Texture(Gdx.files.internal("moneda3.png"));
+				Texture bonusNivel3 = new Texture(Gdx.files.internal("bonus.png")); // Nueva textura bonus
 				Texture planetaNivel3 = new Texture(Gdx.files.internal("planeta.png"));
 				Texture cometaNivel3 = new Texture(Gdx.files.internal("cometa.png"));
 				Texture asteroideNivel3 = new Texture(Gdx.files.internal("asteroide.png"));
+
 				coinSound = Gdx.audio.newSound(Gdx.files.internal("sonido_moneda3.mp3"));
 				instrumentalMusic = Gdx.audio.newMusic(Gdx.files.internal("instrumental3.mp3"));
-				gestorObstaculos = new GestorObstaculos(estrellaNivel3, planetaNivel3, cometaNivel3, asteroideNivel3, coinSound, instrumentalMusic);
+				gestorObstaculos = new GestorObstaculos(estrellaNivel3, bonusNivel3, planetaNivel3,
+						cometaNivel3, asteroideNivel3, coinSound, instrumentalMusic);
 				break;
 		}
 
-		// Creación de los recursos del vehículo y los obstáculos
 		vehiculo.crear();
 		gestorObstaculos.crear();
 	}
@@ -138,10 +150,10 @@ public class GameScreen implements Screen {
 		// Cambio de nivel si el puntaje supera cierto umbral
 		int puntajeActual = scoreManager.getCurrentScore();
 
-		if (puntajeActual >= 800 && nivelActual == 1) {
+		if (puntajeActual >= 100 && nivelActual == 1) {
 			nivelActual = 2;
 			inicializarNivel(nivelActual);
-		} else if (puntajeActual >= 1600 && nivelActual == 2) {
+		} else if (puntajeActual >= 100 && nivelActual == 2) {
 			nivelActual = 3;
 			inicializarNivel(nivelActual);
 		}

@@ -7,43 +7,77 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 
 public class ObstaculoDañino implements IObstaculo {
-    private Texture textura; // Textura del obstáculo
-    private Rectangle area; // Área de colisión del obstáculo
+    private Texture textura;
+    private Rectangle area;
+    private float escala;
+    private TipoObstaculoDañino tipo;
 
-    public ObstaculoDañino(Texture textura) {
+    public enum TipoObstaculoDañino {
+        obs1(0.1f, 40, 40),
+        obs2(0.3f, 30, 60),
+        obs3(0.25f, 60, 10);
+
+        private final float escala;
+        private final float width;
+        private final float height;
+
+        TipoObstaculoDañino(float escala, float width, float height) {
+            this.escala = escala;
+            this.width = width;
+            this.height = height;
+        }
+    }
+
+    public ObstaculoDañino(Texture textura, TipoObstaculoDañino tipo) {
         this.textura = textura;
+        this.tipo = tipo;
+        this.escala = tipo.escala;
         this.area = new Rectangle();
-        // Inicializa la posición aleatoria en el eje X y fija en Y
-        this.area.x = MathUtils.random(0, 800 - textura.getWidth());
-        this.area.y = 480; // Posición inicial en Y
-        this.area.width = textura.getWidth();
-        this.area.height = textura.getHeight();
+        this.area.x = MathUtils.random(0, 800 - tipo.width);
+        this.area.y = 480;
+        this.area.width = tipo.width;
+        this.area.height = tipo.height;
     }
 
     @Override
     public void actualizarMovimiento() {
-        // Desplaza el obstáculo hacia abajo
         area.y -= 300 * Gdx.graphics.getDeltaTime();
     }
 
     @Override
     public void dibujar(SpriteBatch batch) {
-        // Dibuja el obstáculo en la posición correspondiente
-        batch.draw(textura, area.x, area.y);
+        float drawX = area.x;
+        float drawY = area.y;
+
+        if (tipo == TipoObstaculoDañino.obs2) {
+            drawX = area.x - ((textura.getWidth() * escala - area.width) / 2);
+        } else if (tipo == TipoObstaculoDañino.obs3) {
+            drawY = area.y - (textura.getHeight() * escala * 0.2f);
+            drawX = area.x - ((textura.getWidth() * escala - area.width) / 2);
+        }
+
+        batch.draw(textura, drawX, drawY,
+                textura.getWidth() * escala,
+                textura.getHeight() * escala);
     }
 
     @Override
     public Rectangle getArea() {
-        return area; // Devuelve el área de colisión
+        return area;
     }
 
     @Override
     public boolean esDañino() {
-        return true; // Indica que este obstáculo causa daño
+        return true;
     }
 
     @Override
     public void destruir() {
-        textura.dispose(); // Libera la textura al destruir el obstáculo
+        // No disponemos la textura aquí ya que es manejada por GestorObstaculos
+    }
+
+    @Override
+    public boolean estaFueraDePantalla() {
+        return area.y + area.height < 0;
     }
 }

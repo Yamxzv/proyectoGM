@@ -7,43 +7,54 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 
 public class ObstaculoRecolectable implements IObstaculo {
-    private Texture textura; // Textura del objeto recolectable
-    private Rectangle area; // Área de colisión del objeto
+    private Texture textura;
+    private Rectangle area;
+    private static final float ESCALA = 0.15f;
+    private IComportamientoRecolectable comportamiento;
 
-    public ObstaculoRecolectable(Texture textura) {
+    public ObstaculoRecolectable(Texture textura, IComportamientoRecolectable comportamiento) {
         this.textura = textura;
+        this.comportamiento = comportamiento;
         this.area = new Rectangle();
-        // Inicializa la posición aleatoria en el eje X y fija en Y
-        this.area.x = MathUtils.random(0, 800 - textura.getWidth());
-        this.area.y = 480; // Posición inicial en Y
-        this.area.width = textura.getWidth();
-        this.area.height = textura.getHeight();
+        this.area.x = MathUtils.random(0, 800 - 32);
+        this.area.y = 480;
+        this.area.width = 32;
+        this.area.height = 32;
+    }
+
+    public int getPuntos() {
+        return comportamiento.getPuntos();
     }
 
     @Override
     public void actualizarMovimiento() {
-        // Desplaza el objeto hacia abajo
         area.y -= 300 * Gdx.graphics.getDeltaTime();
     }
 
     @Override
     public void dibujar(SpriteBatch batch) {
-        // Dibuja el objeto recolectable en la posición correspondiente
-        batch.draw(textura, area.x, area.y);
+        batch.draw(textura, area.x, area.y,
+                textura.getWidth() * ESCALA,
+                textura.getHeight() * ESCALA);
     }
 
     @Override
     public Rectangle getArea() {
-        return area; // Devuelve el área de colisión
+        return area;
     }
 
     @Override
     public boolean esDañino() {
-        return false; // Indica que este objeto no causa daño
+        return false;
     }
 
     @Override
     public void destruir() {
-        textura.dispose(); // Libera la textura al destruir el objeto
+        // No disponemos la textura aquí ya que es manejada por GestorObstaculos
+    }
+
+    @Override
+    public boolean estaFueraDePantalla() {
+        return area.y + area.height < 0;
     }
 }
